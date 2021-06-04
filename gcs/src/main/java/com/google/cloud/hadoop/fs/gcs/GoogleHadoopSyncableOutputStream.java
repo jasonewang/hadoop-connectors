@@ -39,6 +39,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.StreamCapabilities;
 import org.apache.hadoop.fs.Syncable;
 
 /**
@@ -69,7 +70,8 @@ import org.apache.hadoop.fs.Syncable;
  * with low-level precondition checks will cause all but a one writer to fail their precondition
  * checks during writes, and a single remaining writer will safely occupy the stream.
  */
-public class GoogleHadoopSyncableOutputStream extends OutputStream implements Syncable {
+public class GoogleHadoopSyncableOutputStream extends OutputStream implements Syncable,
+  StreamCapabilities {
   private static final GoogleLogger logger = GoogleLogger.forEnclosingClass();
 
   // Prefix used for all temporary files created by this stream.
@@ -232,6 +234,17 @@ public class GoogleHadoopSyncableOutputStream extends OutputStream implements Sy
 
   public void sync() throws IOException {
     hsync();
+  }
+
+  @Override
+  public boolean hasCapability(final String capability) {
+    if (capability.equals(StreamCapabilities.HFLUSH)) {
+      return options.isSyncOnFlushEnabled();
+    }
+    if (capability.equals(StreamCapabilities.HSYNC)) {
+      return true;
+    }
+    return false;
   }
 
   /**
