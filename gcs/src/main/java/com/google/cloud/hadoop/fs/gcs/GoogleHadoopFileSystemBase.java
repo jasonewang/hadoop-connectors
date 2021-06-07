@@ -863,6 +863,15 @@ public abstract class GoogleHadoopFileSystemBase extends FileSystem
       status = new ArrayList<>(fileInfos.size());
       String userName = getUgiUserName();
       for (FileInfo fileInfo : fileInfos) {
+        String path = fileInfo.getPath().getPath();
+        logger.atFiner().log("listStatus(fileInfo: %s)", path);
+        if (!fileInfo.isDirectory()) {
+          String filename = path.substring(path.lastIndexOf("/")+1);
+          logger.atFiner().log("listStatus(filename: %s)", filename);
+          if (filename.startsWith("_GCS_SYNCABLE_TEMPFILE_")) {
+            continue;
+          }
+        }
         status.add(getFileStatus(fileInfo, userName));
       }
     } catch (FileNotFoundException fnfe) {
