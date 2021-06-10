@@ -315,7 +315,8 @@ public class GoogleHadoopSyncableOutputStream extends OutputStream implements Sy
     // TODO(user): Optimize the case where 0 bytes have been written in the current component
     // to return early.
     WritableByteChannel innerChannel = curDelegate.getInternalChannel();
-    curDelegate.close();
+    // close inner channel so itemInfo is available
+    curDelegate.closeInner();
 
     long generationId = StorageResourceId.UNKNOWN_GENERATION_ID;
     if (innerChannel instanceof GoogleCloudStorageItemInfo.Provider) {
@@ -357,6 +358,7 @@ public class GoogleHadoopSyncableOutputStream extends OutputStream implements Sy
       // committed will be used as the destination generation id for future compose calls.
       curDestGenerationId = generationId;
     }
+    curDelegate.close();
   }
 
   /**

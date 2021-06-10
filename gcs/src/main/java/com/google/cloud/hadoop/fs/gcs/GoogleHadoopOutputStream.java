@@ -110,6 +110,12 @@ class GoogleHadoopOutputStream extends OutputStream {
     statistics.incrementWriteOps(1);
   }
 
+  public void closeInner() throws IOException {
+    if (out != null) {
+      out.close();
+    }
+  }
+
   /** Closes this output stream and releases any system resources associated with this stream. */
   @Override
   public void close() throws IOException {
