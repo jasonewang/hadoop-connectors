@@ -2035,7 +2035,7 @@ public class GoogleCloudStorageImpl implements GoogleCloudStorage {
       final StorageResourceId destination,
       CreateObjectOptions options)
       throws IOException {
-    logger.atFiner().log("composeObjects(%s, %s, %s)", sources, destination, options);
+    logger.atSevere().log("composeObjects(%s, %s, %s)", sources, destination, options);
     for (StorageResourceId inputId : sources) {
       if (!destination.getBucketName().equals(inputId.getBucketName())) {
         throw new IOException(String.format(
@@ -2069,7 +2069,7 @@ public class GoogleCloudStorageImpl implements GoogleCloudStorage {
 
     GoogleCloudStorageItemInfo compositeInfo =
         createItemInfoForStorageObject(destination, compose.execute());
-    logger.atFiner().log("composeObjects() done, returning: %s", compositeInfo);
+    logger.atSevere().log("composeObjects() done, returning: %s", compositeInfo);
     return compositeInfo;
   }
 

@@ -290,7 +290,7 @@ public class GoogleHadoopSyncableOutputStream extends OutputStream implements Sy
 
   /** Internal implementation of hsync, can be reused by hflush() as well. */
   private void hsyncInternal(long startTimeNs) throws IOException {
-    logger.atFiner().log(
+    logger.atSevere().log(
         "hsync(): Committing tail file %s to final destination %s", curGcsPath, finalGcsPath);
     throwIfNotOpen();
 
@@ -301,14 +301,14 @@ public class GoogleHadoopSyncableOutputStream extends OutputStream implements Sy
     ++curComponentIndex;
     curGcsPath = getNextTemporaryPath();
 
-    logger.atFiner().log(
+    logger.atSevere().log(
         "hsync(): Opening next temporary tail file %s as component number %s",
         curGcsPath, curComponentIndex);
     curDelegate =
         new GoogleHadoopOutputStream(ghfs, curGcsPath, statistics, TEMPFILE_CREATE_OPTIONS);
 
     long finishTimeNs = System.nanoTime();
-    logger.atFiner().log("Took %d ns to sync() for %s", finishTimeNs - startTimeNs, finalGcsPath);
+    logger.atSevere().log("Took %d ns to sync() for %s", finishTimeNs - startTimeNs, finalGcsPath);
   }
 
   private void commitCurrentFile() throws IOException {
